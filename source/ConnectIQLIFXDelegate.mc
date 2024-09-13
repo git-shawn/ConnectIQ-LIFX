@@ -27,6 +27,11 @@ class LifxMainInputDelegate extends WatchUi.Menu2InputDelegate {
         Menu2InputDelegate.initialize();
     }
 
+    function onBack() {
+        System.print("Exit app");
+        System.exit();
+    }
+
     function onSelect(item) {
         // Builds the sub menus for each option
         System.println(item.getId());
