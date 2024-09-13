@@ -18,6 +18,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+*.vscode
 
 # Private Files
 lifx_python/ConnectIQ-LIFX.token

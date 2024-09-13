@@ -1,11 +1,9 @@
 // API interface to LIFX servers
 
-
 using Toybox.Communications as comms;
 using Toybox.WatchUi;
 using Toybox.Background;
 using Toybox.Application as app;
-
 
 class LIFX_API extends WatchUi.BehaviorDelegate {
     var notify;
@@ -138,7 +136,7 @@ class LIFX_API extends WatchUi.BehaviorDelegate {
                 :headers => HEADERS,
                 :responseType => comms.HTTP_RESPONSE_CONTENT_TYPE_JSON
                 };
-        var scenes;
+        // var scenes;
 
         // Make the Communications.makeWebRequest() call
         comms.makeWebRequest(url, params, options, method(:parse_scenes));

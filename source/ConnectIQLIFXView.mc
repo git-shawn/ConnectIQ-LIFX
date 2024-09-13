@@ -35,8 +35,7 @@ class ConnectIQLIFXView extends WatchUi.View {
     // Initial view when app is first loaded
     hidden var mMessage = "Loading data from LIFX...";
     hidden var mModel;
-    var main_menu;
-    var main_menu_delegate;
+
     function initialize() {
         WatchUi.View.initialize();
     }
@@ -44,8 +43,7 @@ class ConnectIQLIFXView extends WatchUi.View {
     // Load your resources here
     function onLayout(dc) {
         mMessage = "Loading data from LIFX...";
-        main_menu = gen_main_menu();
-        main_menu_delegate = new LifxMainInputDelegate();
+        //create_main_menu();
     }
 
     // Restore the state of the app and prepare the view to be shown
@@ -54,13 +52,14 @@ class ConnectIQLIFXView extends WatchUi.View {
         System.println("ConnectIQLIFXView: onShow() called with $.LIFX_API_OBJ.auth_ok = " + $.LIFX_API_OBJ.auth_ok);
 
         if ($.LIFX_API_OBJ.auth_ok == true && $.LIFX_API_OBJ.applying_selection == false) {
-            WatchUi.switchToView(main_menu, main_menu_delegate, WatchUi.SLIDE_DOWN);
+            create_main_menu();
+            //WatchUi.switchToView(main_menu, main_menu_delegate, WatchUi.SLIDE_DOWN);
         } else if ($.LIFX_API_OBJ.auth_ok == null){
             mMessage = "Loading data from LIFX...";
         } else if ($.LIFX_API_OBJ.applying_selection == true) {
             mMessage = "Sending signal to LIFX...";
         } else {
-                mMessage = "Authentication error, Please \nset API Key in settings\nvia Garmin Connect";
+                mMessage = "Authentication Error\nSet API Key via\n Garmin Connect";
         }
     }
 
@@ -68,14 +67,13 @@ class ConnectIQLIFXView extends WatchUi.View {
     function onUpdate(dc) {
         System.println("ConnectIQLIFXView: onUpdate() called with $.LIFX_API_OBJ.auth_ok = " + $.LIFX_API_OBJ.auth_ok);
         if ($.LIFX_API_OBJ.auth_ok == true && $.LIFX_API_OBJ.applying_selection == false) {
-            WatchUi.switchToView(main_menu, main_menu_delegate, WatchUi.SLIDE_DOWN);
-//            Application.getApp().setSelection(false);
+            create_main_menu();
         } else {
             System.println("onUpdate() pushing mMessage, $.LIFX_API_OBJ.applying_selection = " + $.LIFX_API_OBJ.applying_selection);
             if ($.LIFX_API_OBJ.applying_selection == true) {
                 mMessage = "Sending signal to LIFX...";
             } else if ($.LIFX_API_OBJ.auth_ok == false) {
-                mMessage = "Authentication error, Please \nset API Key in settings\nvia Garmin Connect";
+                mMessage = "Authentication Error\nSet API Key via\n Garmin Connect";
             }
             dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
             dc.clear();
@@ -91,15 +89,40 @@ class ConnectIQLIFXView extends WatchUi.View {
         return true;
     }
 
-    function gen_main_menu(){
-        // Generates the main menu
-        var init_menu = new WatchUi.Menu();
-        init_menu.setTitle("Select operation");
-        init_menu.addItem("Toggle all lights", :toggle_all_lights);
-        init_menu.addItem("Apply a Scene", :apply_scene);
-        init_menu.addItem("Toggle a light", :toggle_light);
-        init_menu.addItem("Exit", :exit);
-        return init_menu;
+    // Creates and pushes the main app menu
+    function create_main_menu(){
+        var init_menu = new WatchUi.Menu2({:title=>"LIFX Controller"});
+        if (init_menu has :setTheme) {
+            init_menu.setTheme(WatchUi.MENU_THEME_PURPLE);
+        }
+        var delegate;
+        init_menu.addItem(
+            new MenuItem(
+                "Toggle all lights",
+                null,
+                "toggle_all_lights",
+                {}
+            )
+        );
+        init_menu.addItem(
+            new MenuItem(
+                "Toggle a light",
+                null,
+                "toggle_light",
+                {}
+            )
+        );
+        init_menu.addItem(
+            new MenuItem(
+                "Apply a scene",
+                null,
+                "apply_scene",
+                {}
+            )
+        );
+        delegate = new LifxMainInputDelegate();
+        WatchUi.pushView(init_menu, delegate, WatchUi.SLIDE_IMMEDIATE);
+        return true;
     }
 
     function onReceive(args) {
