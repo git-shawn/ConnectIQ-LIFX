@@ -26,3 +26,4 @@ lifx_python/ConnectIQ-LIFX.token
 # Wheels
 *.whl
 docs/logo.docx
+.DS_Store
